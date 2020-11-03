@@ -1,6 +1,6 @@
 import * as lodash from "lodash";
+import { SimpleDataLoader } from "./simple-data-loader";
 
-// https://github.com/graphql/dataloader
 const DataLoader = require("dataloader");
 
 interface User {
@@ -9,9 +9,9 @@ interface User {
 }
 
 const usersById: { [k in string]?: User } = {
-  1: { name: "Bob", friends: ["2", "3"] },
-  2: { name: "Bill", friends: ["1", "3"] },
-  3: { name: "Bo", friends: ["1", "2"] },
+  "1": { name: "Bob", friends: ["2", "3"] },
+  "2": { name: "Bill", friends: ["1", "3"] },
+  "3": { name: "Bo", friends: ["1", "2"] },
 };
 
 // TODO: handle optional case?
@@ -25,18 +25,18 @@ async function run() {
   const userDataLoader = new DataLoader(getUsers);
 
   // Batching
-  const userOne = userDataLoader.load(1);
-  const userTwo = userDataLoader.load(2);
-  const userThree = userDataLoader.load(3);
+  const userOne = userDataLoader.load("1");
+  const userTwo = userDataLoader.load("2");
+  const userThree = userDataLoader.load("3");
 
   const users = await Promise.all([userOne, userTwo, userThree]);
   console.log("users", users);
 
   // Memoization
-  const userOneAgain = await userDataLoader.load(1);
-  console.log("user one again", userOneAgain);
+  // const userOneAgain = await userDataLoader.load("1");
+  // console.log("user one again", userOneAgain);
 
-  // const notFoundUser = await userDataLoader.load(345);
+  // const notFoundUser = await userDataLoader.load('345');
   // console.log("not found user", notFoundUser);
 
   // Batching optimization
@@ -46,6 +46,16 @@ async function run() {
   //   )
   // );
   // console.log("all users friends", allUsersFriends);
+}
+
+async function runSimple() {
+  const userDataLoader = new SimpleDataLoader(getUsers);
+
+  const userOne = userDataLoader.load("1");
+  const userTwo = userDataLoader.load("2");
+
+  const users = await Promise.all([userOne, userTwo]);
+  console.log("users", users);
 }
 
 run();
