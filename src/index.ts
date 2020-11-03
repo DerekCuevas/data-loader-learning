@@ -14,7 +14,6 @@ const usersById: { [k in string]?: User } = {
   "3": { name: "Bo", friends: ["1", "2"] },
 };
 
-// TODO: handle optional case?
 async function getUsers(ids: string[]): Promise<(User | undefined)[]> {
   console.log("getting users for ids", ids);
   return Promise.resolve(ids.map((id) => usersById[id]));
@@ -33,19 +32,19 @@ async function run() {
   console.log("users", users);
 
   // Memoization
-  // const userOneAgain = await userDataLoader.load("1");
-  // console.log("user one again", userOneAgain);
+  const userOneAgain = await userDataLoader.load("1");
+  console.log("user one again", userOneAgain);
 
-  // const notFoundUser = await userDataLoader.load('345');
-  // console.log("not found user", notFoundUser);
+  const notFoundUser = await userDataLoader.load("345");
+  console.log("not found user", notFoundUser);
 
   // Batching optimization
-  // const allUsersFriends = await Promise.all(
-  //   lodash.flatMap(users, (user) =>
-  //     user.friends.map((friendId) => userDataLoader.load(friendId))
-  //   )
-  // );
-  // console.log("all users friends", allUsersFriends);
+  const allUsersFriends = await Promise.all(
+    lodash.flatMap(users, (user) =>
+      user.friends.map((friendId) => userDataLoader.load(friendId))
+    )
+  );
+  console.log("all users friends", allUsersFriends);
 }
 
 async function runSimple() {
